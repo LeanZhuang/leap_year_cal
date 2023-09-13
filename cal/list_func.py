@@ -3,7 +3,8 @@ from cal.cal_func import is_leap_year
 
 the_list = []
 
-def leap_year_list(year1, year2):
+def leap_year_list(year1:int, year2:int) -> str:
+    '''列出两个年份之间的所有闰年'''
     year_range = range(int(year1), int(year2))
     for year in year_range:
         if is_leap_year(year):

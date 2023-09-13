@@ -7,29 +7,40 @@ import cal.cal_func as cf
 import cal.list_func as lf
 
 
-def calculate_is_leap():
-    year = int(year_entry_1.get())
-
-    if cf.is_leap_year(year):
-        text=f'{year}年是闰年'
-    else:
-        text=f'{year}年是平年'
-
+def set_result(result_text:tk.Text, text:str, res_error=False):
+    '''配置输出结果'''
     result_text.config(state='normal')
     result_text.delete('1.0', 'end')
     result_text.insert('end', text)
     result_text.configure(state='disabled')
+    if res_error == True:
+        result_text.tag_add("color_tag", "1.0", "end")
+        result_text.tag_configure("color_tag", font=error_font, foreground="red", background="yellow")
+
+
+def calculate_is_leap():
+    try:
+        year = int(year_entry_1.get())
+        if cf.is_leap_year(year):
+            text=f'{year}年是闰年'
+            set_result(result_text, text)
+        else:
+            text=f'{year}年是平年'
+            set_result(result_text, text)
+    except ValueError:
+        text='输入错误，请检查输入是否为年份'
+        set_result(result_text, text, True)
 
 
 def calculate_leap_list():
-    year1 = int(year_entry_2_1.get())
-    year2 = int(year_entry_2_2.get())
-    text=lf.leap_year_list(year1, year2)
-
-    result_text.config(state='normal')
-    result_text.delete('1.0', 'end')
-    result_text.insert('end', text)
-    result_text.configure(state='disabled')
+    try:
+        year1 = int(year_entry_2_1.get())
+        year2 = int(year_entry_2_2.get())
+        text = lf.leap_year_list(year1, year2)
+        set_result(result_text, text)
+    except ValueError:
+        text='输入错误，请检查输入是否为年份'
+        set_result(result_text, text, True)
 
 
 # 窗口配置
@@ -41,7 +52,8 @@ window.geometry('600x400')
 # 字体配置
 normal_font = font.Font(family='Arial', size=14)
 bold_font = font.Font(family='Arial', size=12, weight='bold')
-
+error_font = font.Font(family='Arial', size=15, weight='bold')
+mark_font = font.Font(family='Arial', size=10)
 
 
 # 框架 1
@@ -81,15 +93,19 @@ button2.pack(side='left', padx=25)
 
 # 框架 3
 frame3 = ttk.Frame(window)
-frame3.pack(fill=tk.BOTH, expand=True, padx=25, pady=25)
+frame3.pack(fill='x', padx=20, pady=20)
 
 label3 = ttk.Label(frame3, text='- 结果窗口 -', font=bold_font, anchor='w')
 label3.pack(anchor='w', pady=5)
 
 result_text = tk.Text(frame3, font=normal_font)
 result_text.configure(font=normal_font)
-result_text.pack(anchor='w', fill='both')
+result_text.pack(anchor='w', fill='x')
 result_text.pack_propagate(False)
+
+
+label_marked = ttk.Label(window, text='by Lean Zhuang 2023.09', font=mark_font)
+label_marked.pack(pady=2, expand=True)
 
 
 window.mainloop()
